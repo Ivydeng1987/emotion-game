@@ -309,7 +309,8 @@ h1{font-size:1.5rem;color:var(--dpu);font-weight:900;margin-bottom:6px;line-heig
   <div class="affirm-grid">
     <button class="affirm-btn" onclick="chooseAffirm(this,'我很勇敢')"><span class="a-star">💪</span><span class="a-text">我很勇敢</span></button>
     <button class="affirm-btn" onclick="chooseAffirm(this,'我会照顾自己')"><span class="a-star">🤗</span><span class="a-text">我会照顾自己</span></button>
-    <button class="affirm-btn" onclick="chooseAffirm(this,'我的感受很重要')"><span class="a-star">💗</span><span class="a-text">我的感受很重要</span></button>
+    <button class="affirm-btn" onclick="chooseAffirm(this,'请跟着我说：我的感受很重要')"><span class="a-star">💗</span><span class="a-text">请跟着我说：
+我的感受很重要</span></button>
     <button class="affirm-btn" onclick="chooseAffirm(this,'我能说出我的心情')"><span class="a-star">🗣️</span><span class="a-text">我能说出我的心情</span></button>
     <button class="affirm-btn" onclick="chooseAffirm(this,'我越来越厉害了')"><span class="a-star">🌟</span><span class="a-text">我越来越厉害了</span></button>
     <button class="affirm-btn" onclick="chooseAffirm(this,'我很爱我自己')"><span class="a-star">🥰</span><span class="a-text">我很爱我自己</span></button>
@@ -423,7 +424,7 @@ function goTo(id){
   if(id==='s-affirm'){
     document.getElementById('btn-a').style.display='none';
     document.querySelectorAll('.affirm-btn').forEach(b=>b.classList.remove('chosen'));
-    setBird('bm6','骄傲','你真棒！现在选一颗星星，大声说出来！');setTimeout(()=>speak('太厉害了！情绪飞走了！现在选一颗星星，大声说出来！'),800);
+    setBird('bm6','骄傲','你真棒！现在选一颗星星，大声说出来！');setTimeout(()=>speak('太厉害了！情绪飞走了！现在选一颗星星，大声说出来！'),1500);
   }
   if(id==='s-celebrate'){
     const msg=celMsgs[selEmotion]||'你听到了自己的身体信号！情绪飞走了！';
