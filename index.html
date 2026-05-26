@@ -122,6 +122,11 @@ h1{font-size:1.5rem;color:var(--dpu);font-weight:900;margin-bottom:6px;line-heig
 </style>
 </head>
 <body>
+<!-- Background Music -->
+<audio id="bgm" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f6833.mp3" type="audio/mpeg">
+</audio>
+<div id="music-btn" onclick="toggleMusic()" style="position:fixed;top:12px;right:12px;z-index:999;background:rgba(255,255,255,.8);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;box-shadow:0 2px 8px rgba(180,120,180,.2);">🎵</div>
 <div class="deco">🌸</div><div class="deco">✨</div><div class="deco">🌈</div>
 <div class="deco">🦋</div><div class="deco">⭐</div><div class="deco">🌺</div>
 <div class="confetti-container" id="confetti"></div>
@@ -335,25 +340,30 @@ const mascotMap={'生气':'😤','害怕':'😰','伤心':'😢','委屈':'🥹'
 const talkOpts={'生气':['我看到你了，你很生气，没关系的','生气是真实的，说出来就好了','谢谢你告诉我，我爱你'],'害怕':['我感受到你了，害怕是正常的','没关系，害怕也可以说出来','我在这里陪着你，不用怕'],'伤心':['我听到你了，伤心的时候可以哭','伤心是真实的，流出来就好了','没关系，我陪着你'],'委屈':['我知道你很委屈，说出来了','委屈可以说出来，不用憋着','我听到你了，你很委屈'],'焦虑':['我感受到你了，焦虑是正常的','没关系，慢慢来，不着急','深呼吸，一切都会好的'],'开心':['我感受到你了，你好开心！','开心真好！分享出来更好！','谢谢你告诉我，我也开心！'],'累了':['我知道你累了，可以休息一下','累了就休息，不用硬撑','辛苦了！你已经很棒了'],'孤单':['我感受到你了，你有点孤单','孤单的时候可以说出来','我在这里，你不是一个人'],'骄傲':['我感受到你了，你很骄傲！','太棒了！值得骄傲！','你做到了！你真的很厉害！'],'不知道':['没关系，说不出来也是一种感受','我知道你了，谢谢你告诉我','能感受到，就已经很棒了']};
 const celMsgs={'生气':'你说出了生气，真勇敢！\n情绪说出来就不那么重了～','害怕':'你说出了害怕，好厉害！\n说出来，害怕就小一点了～','伤心':'你说出了伤心，真了不起！\n眼泪流出来，心就轻了～','委屈':'你说出了委屈，太棒了！\n说出来比憋着好多了～','焦虑':'你说出了焦虑，好勇敢！\n深呼吸，一切都会好的～','开心':'你分享了开心，真好！\n开心说出来会加倍哦～','累了':'你说出了累，真棒！\n知道自己累了，就可以好好休息～','孤单':'你说出了孤单，好厉害！\n说出来，就不那么孤单了～','骄傲':'你分享了骄傲，太棒了！\n你真的做到了很了不起的事！','不知道':'你感受到了，并且说出来了！\n这已经非常了不起！'};
 
+let speakTimer=null;
 function speak(t){
   if(!t)return;
-  fetch('https://tts-proxy-azure.vercel.app/api/tts',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({text:t})
-  }).then(r=>r.arrayBuffer()).then(buf=>{
-    const ctx=new(window.AudioContext||window.webkitAudioContext)();
-    ctx.decodeAudioData(buf,decoded=>{
-      const src=ctx.createBufferSource();
-      src.buffer=decoded;
-      src.connect(ctx.destination);
-      src.start();
-    });
-  }).catch(()=>{
+  if(speakTimer)clearTimeout(speakTimer);
+  window.speechSynthesis.cancel();
+  speakTimer=setTimeout(()=>{
     const u=new SpeechSynthesisUtterance(t);
-    u.lang='zh-CN';u.rate=0.82;
+    u.lang='zh-CN';
+    u.rate=0.78;
+    u.pitch=1.2;
+    u.volume=1;
+    // Try to find a gentle female voice
+    const voices=window.speechSynthesis.getVoices();
+    const preferred=['Tingting','Meijia','Yu-shu','Microsoft Xiaoxiao','Microsoft Yaoyao','Google 普通话（中国大陆）'];
+    let chosen=null;
+    for(const name of preferred){
+      const v=voices.find(x=>x.name.includes(name));
+      if(v){chosen=v;break;}
+    }
+    if(!chosen) chosen=voices.find(v=>v.lang.startsWith('zh')&&v.name.toLowerCase().includes('female'));
+    if(!chosen) chosen=voices.find(v=>v.lang.startsWith('zh'));
+    if(chosen) u.voice=chosen;
     window.speechSynthesis.speak(u);
-  });
+  },120);
 }
 function speakEl(id){const el=document.getElementById(id);if(el){const t=el.textContent.replace(/[\p{Emoji}]/gu,'').trim();speak(t);}}
 function speakCel(){speak(document.getElementById('cel-msg').textContent);}
@@ -403,7 +413,7 @@ function goTo(id){
   if(id==='s-affirm'){
     document.getElementById('btn-a').style.display='none';
     document.querySelectorAll('.affirm-btn').forEach(b=>b.classList.remove('chosen'));
-    setBird('bm6','骄傲','你真棒！现在选一颗星星，大声说出来！');setTimeout(()=>speak('太厉害了！情绪飞走了！现在选一颗星星，大声说出来！'),300);
+    setBird('bm6','骄傲','你真棒！现在选一颗星星，大声说出来！');setTimeout(()=>speak('太厉害了！情绪飞走了！现在选一颗星星，大声说出来！'),800);
   }
   if(id==='s-celebrate'){
     const msg=celMsgs[selEmotion]||'你听到了自己的身体信号！情绪飞走了！';
@@ -628,6 +638,20 @@ function clearCanvas(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
 }
 
+
+// BACKGROUND MUSIC
+let musicOn=true;
+function toggleMusic(){
+  const bgm=document.getElementById('bgm');
+  const btn=document.getElementById('music-btn');
+  if(musicOn){bgm.pause();btn.textContent='🔇';musicOn=false;}
+  else{bgm.play();btn.textContent='🎵';musicOn=true;}
+}
+function startMusic(){
+  const bgm=document.getElementById('bgm');
+  bgm.volume=0.18;
+  bgm.play().catch(()=>{});
+}
 function restart(){
   selBody=selFeel=selEmotion=selAffirm=customTalk='';
   window.speechSynthesis.cancel();
@@ -642,6 +666,10 @@ function restart(){
   goTo('s-welcome');
 }
 
+document.addEventListener('click',function startOnce(){
+  startMusic();
+  document.removeEventListener('click',startOnce);
+},{once:true});
 window.addEventListener('load',()=>{
   ['bm0','bm1','bm2','bm3','bm4','bm-draw','bm5','bm6','bm7'].forEach(id=>{setBird(id,'default');});
   setBird('bm0','default','你好！我是小花！我来陪你一起听听身体说的话！');
