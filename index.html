@@ -428,10 +428,10 @@ function goTo(id){
   }
   if(id==='s-celebrate'){
     const msg=celMsgs[selEmotion]||'你听到了自己的身体信号！情绪飞走了！';
-    const full=msg+'\n\n你说：'+selAffirm+'！';
+    const full=msg+'\n\n请对自己说：'+selAffirm+'！';
     document.getElementById('cel-msg').textContent=full;
     launchConfetti();
-    setBird('bm7','celebrate','太棒了！');setTimeout(()=>speak('太棒了！'+msg+'还有，'+selAffirm+'！'),400);
+    setBird('bm7','celebrate','太棒了！');setTimeout(()=>speak('太棒了！'+msg+'请对自己说：'+selAffirm+'！'),2000);
   }
 }
 
