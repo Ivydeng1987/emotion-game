@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>身体小信号 🌸</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap');
+:root{--pink:#FFB5C8;--purple:#C9B1E8;--blue:#A8D8EA;--green:#B8E4B8;--yellow:#FFE4A0;--dp:#FF85A1;--dpu:#9B7FCC;--text:#5A3E5A;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFE8F0 0%,#EDE0FF 40%,#D4EEFF 70%,#D8F5D8 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;overflow-x:hidden;}
+.deco{position:fixed;pointer-events:none;font-size:1.4rem;animation:float 4s ease-in-out infinite;opacity:.5;z-index:0;}
+.deco:nth-child(1){top:4%;left:4%;animation-delay:0s;}.deco:nth-child(2){top:8%;right:6%;animation-delay:.7s;}.deco:nth-child(3){top:38%;left:2%;animation-delay:1.2s;}.deco:nth-child(4){bottom:14%;left:5%;animation-delay:.4s;}.deco:nth-child(5){bottom:8%;right:4%;animation-delay:1.8s;}.deco:nth-child(6){top:62%;right:3%;animation-delay:.9s;}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-10px) rotate(5deg);}}
+.container{position:relative;z-index:1;width:100%;max-width:420px;padding:14px;}
+.screen{display:none;animation:fadeIn .5s ease;}.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.card{background:rgba(255,255,255,.88);backdrop-filter:blur(12px);border-radius:28px;padding:24px 20px;box-shadow:0 8px 32px rgba(180,120,180,.15);text-align:center;}
+.mascot{font-size:4rem;display:block;margin:0 auto 8px;transition:all .4s ease;animation:bounce 2s ease-in-out infinite;cursor:pointer;user-select:none;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+h1{font-size:1.5rem;color:var(--dpu);font-weight:900;margin-bottom:6px;line-height:1.3;cursor:pointer;}
+.subtitle{font-size:.9rem;color:#9B7FC0;margin-bottom:16px;line-height:1.6;cursor:pointer;}
+.hint-bar{background:linear-gradient(135deg,#FFF0FF,#F0F0FF);border-radius:12px;padding:7px 14px;font-size:.78rem;color:#9B7FC0;font-weight:700;margin-bottom:14px;display:inline-flex;align-items:center;gap:5px;}
+.progress{display:flex;justify-content:center;gap:7px;margin-bottom:18px;}
+.dot{width:10px;height:10px;border-radius:50%;background:#DDD;transition:all .3s ease;}.dot.active{background:var(--dpu);transform:scale(1.3);}.dot.done{background:var(--dp);}
+
+/* BODY MAP */
+.body-map{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin:14px 0;}
+.body-btn{background:white;border:3px solid transparent;border-radius:16px;padding:12px 6px;cursor:pointer;transition:all .22s ease;box-shadow:0 3px 10px rgba(0,0,0,.06);font-family:inherit;position:relative;}
+.body-btn:active{transform:scale(.95);}.body-btn.selected,.body-btn:hover{transform:translateY(-3px);box-shadow:0 7px 18px rgba(0,0,0,.1);}
+.body-btn .b-emoji{font-size:1.6rem;display:block;margin-bottom:4px;}.body-btn .b-label{font-size:.75rem;font-weight:800;color:var(--text);}
+.body-btn[data-part="心脏"]{border-color:var(--pink);background:linear-gradient(135deg,#FFF0F5,#FFE0EC);}
+.body-btn[data-part="肚子"]{border-color:var(--green);background:linear-gradient(135deg,#F0FFF0,#E0FFE0);}
+.body-btn[data-part="喉咙"]{border-color:var(--purple);background:linear-gradient(135deg,#F5F0FF,#EDE0FF);}
+.body-btn[data-part="头"]{border-color:var(--blue);background:linear-gradient(135deg,#F0F8FF,#E0F0FF);}
+.body-btn[data-part="肩膀"]{border-color:var(--yellow);background:linear-gradient(135deg,#FFFAF0,#FFF3D0);}
+.body-btn[data-part="胸口"]{border-color:#FFB0D0;background:linear-gradient(135deg,#FFF5F8,#FFE8F0);}
+.body-btn[data-part="脸"]{border-color:#FFCBA0;background:linear-gradient(135deg,#FFF8F0,#FFF0E0);}
+.body-btn[data-part="手"]{border-color:#A0D8C0;background:linear-gradient(135deg,#F0FFF8,#E0FFF0);}
+.body-btn[data-part="腿"]{border-color:#B0C8FF;background:linear-gradient(135deg,#F0F4FF,#E8EEFF);}
+.body-btn[data-part="其他"]{border-color:#DDD;background:linear-gradient(135deg,#F8F8F8,#F0F0F0);grid-column:span 3;}
+
+/* FEEL GRID */
+.feel-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0;}
+.feel-btn{background:white;border:3px solid #EEE;border-radius:16px;padding:13px 8px;cursor:pointer;transition:all .22s ease;font-family:inherit;box-shadow:0 3px 10px rgba(0,0,0,.05);display:flex;align-items:center;gap:8px;}
+.feel-btn:active{transform:scale(.95);}.feel-btn.selected,.feel-btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.1);}
+.feel-btn .f-emoji{font-size:1.5rem;flex-shrink:0;}.feel-btn .f-text{font-size:.8rem;font-weight:800;color:var(--text);text-align:left;line-height:1.3;}
+.feel-btn[data-feel="紧紧的"]{border-color:#FFB5C8;}.feel-btn[data-feel="沉沉的"]{border-color:#C9B1E8;}.feel-btn[data-feel="热热的"]{border-color:#FFD4A0;}.feel-btn[data-feel="凉凉的"]{border-color:#A8D8EA;}.feel-btn[data-feel="跳得很快"]{border-color:#FF85A1;}.feel-btn[data-feel="空空的"]{border-color:#B8D8FF;}.feel-btn[data-feel="胀胀的"]{border-color:#B8E4B8;}.feel-btn[data-feel="刺刺的"]{border-color:#FFE4A0;}.feel-btn[data-feel="软软的"]{border-color:#E4C9E8;}.feel-btn[data-feel="抖抖的"]{border-color:#A0D8C0;}.feel-btn[data-feel="说不清"]{border-color:#DDD;background:#F8F8F8;grid-column:span 2;justify-content:center;}
+
+/* EMOTION GRID */
+.emotion-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0;}
+.emotion-btn{background:white;border:3px solid #EEE;border-radius:16px;padding:12px 6px;cursor:pointer;transition:all .22s ease;font-family:inherit;box-shadow:0 3px 10px rgba(0,0,0,.05);}
+.emotion-btn:active{transform:scale(.95);}.emotion-btn.selected,.emotion-btn:hover{transform:scale(1.05);box-shadow:0 6px 16px rgba(0,0,0,.1);}
+.emotion-btn .e-emoji{font-size:1.7rem;display:block;margin-bottom:4px;}.emotion-btn .e-label{font-size:.75rem;font-weight:800;color:var(--text);}
+.emotion-btn[data-emotion="生气"]{border-color:#FFB0B0;background:#FFF5F5;}.emotion-btn[data-emotion="害怕"]{border-color:#C9B1E8;background:#F8F5FF;}.emotion-btn[data-emotion="伤心"]{border-color:#A8D8EA;background:#F0F8FF;}.emotion-btn[data-emotion="委屈"]{border-color:#FFB5C8;background:#FFF0F5;}.emotion-btn[data-emotion="焦虑"]{border-color:#FFD4A0;background:#FFFAF0;}.emotion-btn[data-emotion="开心"]{border-color:#B8E4B8;background:#F5FFF5;}.emotion-btn[data-emotion="累了"]{border-color:#D4C5E8;background:#F8F5FF;}.emotion-btn[data-emotion="孤单"]{border-color:#A8D8EA;background:#F0FAFF;}.emotion-btn[data-emotion="骄傲"]{border-color:#FFE4A0;background:#FFFDF0;}.emotion-btn[data-emotion="不知道"]{border-color:#DDD;background:#F8F8F8;}
+
+/* TALK */
+.talk-section{background:linear-gradient(135deg,#FFF0F8,#F0F0FF);border-radius:18px;padding:16px;margin:14px 0;}
+.talk-prompt{font-size:.95rem;color:var(--text);font-weight:800;margin-bottom:10px;line-height:1.5;cursor:pointer;}
+.talk-options{display:flex;flex-direction:column;gap:7px;}
+.talk-option{background:white;border:2px solid var(--purple);border-radius:14px;padding:11px 14px;cursor:pointer;font-family:inherit;font-size:.85rem;color:var(--text);text-align:left;transition:all .2s ease;font-weight:700;display:flex;align-items:center;gap:7px;}
+.talk-option:hover,.talk-option.selected{background:linear-gradient(135deg,#EDE0FF,#FFE0F0);border-color:var(--dpu);transform:translateX(4px);}
+.talk-option .opt-spk{font-size:.9rem;flex-shrink:0;opacity:.6;}
+
+/* CUSTOM TALK INPUT */
+.custom-talk-box{margin-top:12px;background:white;border-radius:16px;padding:14px;border:2px dashed var(--purple);}
+.custom-talk-label{font-size:.82rem;font-weight:800;color:var(--dpu);margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.custom-talk-row{display:flex;gap:8px;align-items:center;}
+.custom-talk-input{flex:1;border:2px solid var(--purple);border-radius:12px;padding:9px 12px;font-family:inherit;font-size:.88rem;color:var(--text);outline:none;background:#FAFAFF;}
+.custom-talk-input:focus{border-color:var(--dpu);}
+.custom-talk-btn{background:linear-gradient(135deg,var(--dp),var(--dpu));color:white;border:none;border-radius:12px;padding:9px 14px;font-size:.85rem;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap;}
+
+/* BUBBLE */
+.release-area{margin:18px 0;height:150px;position:relative;display:flex;align-items:center;justify-content:center;}
+.bubble{width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.9),rgba(200,180,255,.6));border:3px solid rgba(180,150,220,.4);display:flex;align-items:center;justify-content:center;font-size:2.3rem;cursor:pointer;box-shadow:0 8px 24px rgba(180,150,220,.3);animation:breathe 2s ease-in-out infinite;}
+@keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+.bubble.releasing{animation:release 1.5s ease-out forwards;}
+@keyframes release{0%{transform:scale(1);opacity:1;}50%{transform:scale(1.4);opacity:.7;}100%{transform:scale(2.5) translateY(-60px);opacity:0;}}
+.tap-hint{position:absolute;bottom:-8px;font-size:.78rem;color:#9B7FC0;font-weight:700;}
+
+/* AFFIRM */
+.affirm-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;}
+.affirm-btn{background:white;border:3px solid var(--purple);border-radius:18px;padding:14px 8px;cursor:pointer;font-family:inherit;transition:all .25s ease;box-shadow:0 3px 12px rgba(0,0,0,.06);}
+.affirm-btn:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 8px 20px rgba(180,120,180,.2);}
+.affirm-btn.chosen{background:linear-gradient(135deg,#FFE0F0,#EDE0FF);border-color:var(--dp);}
+.affirm-btn .a-star{font-size:1.8rem;display:block;margin-bottom:5px;}.affirm-btn .a-text{font-size:.8rem;font-weight:800;color:var(--text);line-height:1.3;}
+
+/* SHARED */
+.sel-display{background:linear-gradient(135deg,#FFE8F5,#EDE0FF);border-radius:14px;padding:10px 14px;margin:10px 0;font-size:.95rem;font-weight:800;color:var(--dpu);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;}
+.btn-primary{background:linear-gradient(135deg,var(--dp),var(--dpu));color:white;border:none;border-radius:50px;padding:13px 30px;font-size:.95rem;font-weight:900;cursor:pointer;font-family:inherit;transition:all .25s ease;box-shadow:0 6px 20px rgba(180,100,180,.35);display:inline-block;margin-top:8px;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(180,100,180,.45);}.btn-primary:active{transform:scale(.97);}
+.celebrate-text{font-size:1.05rem;font-weight:800;color:var(--dpu);margin:12px 0 6px;line-height:1.6;white-space:pre-line;cursor:pointer;}
+.stars{font-size:1.8rem;letter-spacing:4px;display:block;margin:10px 0;animation:sparkle 1s ease-in-out infinite alternate;}
+@keyframes sparkle{from{transform:scale(1);}to{transform:scale(1.1);}}
+.confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100;overflow:hidden;}
+.confetti-piece{position:absolute;width:10px;height:10px;border-radius:2px;animation:confettiFall 2.5s ease-out forwards;}
+@keyframes confettiFall{0%{transform:translateY(-20px) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(720deg);opacity:0;}}
+.other-input{width:100%;border:2px solid var(--purple);border-radius:12px;padding:10px 14px;font-family:inherit;font-size:.9rem;color:var(--text);outline:none;margin-top:8px;background:white;}
+.other-input:focus{border-color:var(--dpu);}
+</style>
+</head>
+<body>
+<div class="deco">🌸</div><div class="deco">✨</div><div class="deco">🌈</div>
+<div class="deco">🦋</div><div class="deco">⭐</div><div class="deco">🌺</div>
+<div class="confetti-container" id="confetti"></div>
+<div class="container">
+
+<!-- S1 WELCOME -->
+<div class="screen active" id="s-welcome">
+<div class="card">
+  <span class="mascot" onclick="speak('你好！我是小花！我来陪你一起听听身体说的话！')">🌸</span>
+  <h1 onclick="speak('身体小信号')">身体小信号</h1>
+  <p class="subtitle" onclick="speak('你的身体很聪明，它一直在悄悄跟你说话，我们来听听它说什么吧！')">你的身体很聪明，<br>它一直在悄悄跟你说话～<br>我们来听听它说什么吧！</p>
+  <div class="hint-bar">🔊 点任何地方都能听声音哦！</div><br>
+  <button class="btn-primary" onclick="speak('开始！');goTo('s-body')">开始游戏 ✨</button>
+</div>
+</div>
+
+<!-- S2 BODY PART -->
+<div class="screen" id="s-body">
+<div class="progress"><div class="dot done"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+<div class="card">
+  <span class="mascot" id="m1" onclick="speak('身体哪里有感觉？')">🤔</span>
+  <h1 onclick="speak('身体哪里有感觉？')">身体哪里<br>有感觉？</h1>
+  <p class="subtitle" onclick="speak('闭上眼睛感受一下，哪里有点不一样？点那个地方！')">闭上眼睛感受一下，<br>哪里有点不一样？</p>
+  <div class="hint-bar">🔊 点按钮听读音</div>
+  <div class="body-map">
+    <button class="body-btn" data-part="头" onclick="selectBody(this,'头')"><span class="b-emoji">🗣️</span><span class="b-label">头</span></button>
+    <button class="body-btn" data-part="脸" onclick="selectBody(this,'脸')"><span class="b-emoji">😊</span><span class="b-label">脸</span></button>
+    <button class="body-btn" data-part="喉咙" onclick="selectBody(this,'喉咙')"><span class="b-emoji">🫧</span><span class="b-label">喉咙</span></button>
+    <button class="body-btn" data-part="心脏" onclick="selectBody(this,'心脏')"><span class="b-emoji">💗</span><span class="b-label">心脏</span></button>
+    <button class="body-btn" data-part="胸口" onclick="selectBody(this,'胸口')"><span class="b-emoji">🌸</span><span class="b-label">胸口</span></button>
+    <button class="body-btn" data-part="肩膀" onclick="selectBody(this,'肩膀')"><span class="b-emoji">🪨</span><span class="b-label">肩膀</span></button>
+    <button class="body-btn" data-part="肚子" onclick="selectBody(this,'肚子')"><span class="b-emoji">🌀</span><span class="b-label">肚子</span></button>
+    <button class="body-btn" data-part="手" onclick="selectBody(this,'手')"><span class="b-emoji">🤲</span><span class="b-label">手</span></button>
+    <button class="body-btn" data-part="腿" onclick="selectBody(this,'腿脚')"><span class="b-emoji">🦵</span><span class="b-label">腿脚</span></button>
+    <button class="body-btn" data-part="其他" onclick="selectBody(this,'其他地方')"><span class="b-emoji">🔍</span><span class="b-label">其他地方…</span></button>
+  </div>
+  <div id="other-input-box" style="display:none">
+    <input class="other-input" id="other-input" placeholder="是哪里呢？说给妈妈听～" oninput="otherTyped()">
+  </div>
+  <br><button class="btn-primary" id="btn-b" onclick="goTo('s-feel')" style="display:none">找到了！→</button>
+</div>
+</div>
+
+<!-- S3 BODY FEELING -->
+<div class="screen" id="s-feel">
+<div class="progress"><div class="dot done"></div><div class="dot done"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+<div class="card">
+  <span class="mascot" id="m2" onclick="speak('是什么感觉？')">🧐</span>
+  <h1 onclick="speak('是什么感觉？')">是什么感觉？</h1>
+  <div class="sel-display" id="body-disp" onclick="speakEl('body-disp')">💗 心脏</div>
+  <p class="subtitle" onclick="speak('那个地方感觉怎么样？选一个最像的！')">那个地方感觉怎么样？<br>选一个最像的！</p>
+  <div class="hint-bar">🔊 点按钮听读音</div>
+  <div class="feel-grid">
+    <button class="feel-btn" data-feel="紧紧的" onclick="selectFeel(this,'紧紧的，好像被握住')"><span class="f-emoji">🤜</span><span class="f-text">紧紧的<br>好像被握住</span></button>
+    <button class="feel-btn" data-feel="沉沉的" onclick="selectFeel(this,'沉沉的，好像有石头')"><span class="f-emoji">🪨</span><span class="f-text">沉沉的<br>好像有石头</span></button>
+    <button class="feel-btn" data-feel="热热的" onclick="selectFeel(this,'热热的，好像在发烫')"><span class="f-emoji">🔥</span><span class="f-text">热热的<br>好像在发烫</span></button>
+    <button class="feel-btn" data-feel="凉凉的" onclick="selectFeel(this,'凉凉的，有点冷')"><span class="f-emoji">❄️</span><span class="f-text">凉凉的<br>有点冷</span></button>
+    <button class="feel-btn" data-feel="跳得很快" onclick="selectFeel(this,'跳得很快，砰砰砰')"><span class="f-emoji">💓</span><span class="f-text">跳得很快<br>砰砰砰</span></button>
+    <button class="feel-btn" data-feel="空空的" onclick="selectFeel(this,'空空的，好像空了')"><span class="f-emoji">🕳️</span><span class="f-text">空空的<br>好像空了</span></button>
+    <button class="feel-btn" data-feel="胀胀的" onclick="selectFeel(this,'胀胀的，好像气球')"><span class="f-emoji">🎈</span><span class="f-text">胀胀的<br>好像气球</span></button>
+    <button class="feel-btn" data-feel="刺刺的" onclick="selectFeel(this,'刺刺的，有点痛')"><span class="f-emoji">🌵</span><span class="f-text">刺刺的<br>有点痛</span></button>
+    <button class="feel-btn" data-feel="软软的" onclick="selectFeel(this,'软软的，像棉花')"><span class="f-emoji">☁️</span><span class="f-text">软软的<br>像棉花</span></button>
+    <button class="feel-btn" data-feel="抖抖的" onclick="selectFeel(this,'抖抖的，在颤抖')"><span class="f-emoji">🍃</span><span class="f-text">抖抖的<br>在颤抖</span></button>
+    <button class="feel-btn" data-feel="说不清" onclick="selectFeel(this,'说不清，感觉很奇怪')" style="grid-column:span 2;justify-content:center;"><span class="f-emoji">💭</span><span class="f-text">说不清楚，就是怪怪的</span></button>
+  </div>
+  <button class="btn-primary" id="btn-f" onclick="goTo('s-emotion')" style="display:none">就是这个！→</button>
+</div>
+</div>
+
+<!-- S4 EMOTION NAME -->
+<div class="screen" id="s-emotion">
+<div class="progress"><div class="dot done"></div><div class="dot done"></div><div class="dot done"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+<div class="card">
+  <span class="mascot" id="m3" onclick="speak('这个感觉叫什么名字？')">🎭</span>
+  <h1 onclick="speak('这个感觉叫什么名字？')">这个感觉<br>叫什么名字？</h1>
+  <div class="sel-display" id="feel-disp" onclick="speakEl('feel-disp')">🤜 紧紧的</div>
+  <p class="subtitle" onclick="speak('哪个名字最像你的感受？点一下听一听！')">哪个名字最像你的感受？</p>
+  <div class="emotion-grid">
+    <button class="emotion-btn" data-emotion="生气" onclick="selectEmotion(this,'生气')"><span class="e-emoji">😤</span><span class="e-label">生气</span></button>
+    <button class="emotion-btn" data-emotion="害怕" onclick="selectEmotion(this,'害怕')"><span class="e-emoji">😨</span><span class="e-label">害怕</span></button>
+    <button class="emotion-btn" data-emotion="伤心" onclick="selectEmotion(this,'伤心')"><span class="e-emoji">😢</span><span class="e-label">伤心</span></button>
+    <button class="emotion-btn" data-emotion="委屈" onclick="selectEmotion(this,'委屈')"><span class="e-emoji">🥺</span><span class="e-label">委屈</span></button>
+    <button class="emotion-btn" data-emotion="焦虑" onclick="selectEmotion(this,'焦虑，心里紧张')"><span class="e-emoji">😟</span><span class="e-label">焦虑</span></button>
+    <button class="emotion-btn" data-emotion="开心" onclick="selectEmotion(this,'开心')"><span class="e-emoji">😊</span><span class="e-label">开心</span></button>
+    <button class="emotion-btn" data-emotion="累了" onclick="selectEmotion(this,'累了')"><span class="e-emoji">😴</span><span class="e-label">累了</span></button>
+    <button class="emotion-btn" data-emotion="孤单" onclick="selectEmotion(this,'孤单')"><span class="e-emoji">🌧️</span><span class="e-label">孤单</span></button>
+    <button class="emotion-btn" data-emotion="骄傲" onclick="selectEmotion(this,'骄傲')"><span class="e-emoji">🌟</span><span class="e-label">骄傲</span></button>
+    <button class="emotion-btn" data-emotion="不知道" onclick="selectEmotion(this,'不知道，说不出来')"><span class="e-emoji">💭</span><span class="e-label">不知道</span></button>
+  </div>
+  <button class="btn-primary" id="btn-e" onclick="goTo('s-talk')" style="display:none">就是这个！→</button>
+</div>
+</div>
+
+<!-- S5 TALK -->
+<div class="screen" id="s-talk">
+<div class="progress"><div class="dot done"></div><div class="dot done"></div><div class="dot done"></div><div class="dot done"></div><div class="dot active"></div><div class="dot"></div></div>
+<div class="card">
+  <span class="mascot" id="m4" onclick="speak('跟身体说句话吧！')">💬</span>
+  <h1 onclick="speak('跟身体说句话吧！')">跟身体<br>说句话吧～</h1>
+  <div class="sel-display" id="emotion-disp" onclick="speakEl('emotion-disp')">😤 生气</div>
+  <div class="talk-section">
+    <div class="talk-prompt" onclick="speak('选一句你想说的，或者自己写一句！')">选一句，或者自己写一句！</div>
+    <div class="talk-options" id="talk-opts"></div>
+    <!-- CUSTOM INPUT -->
+    <div class="custom-talk-box">
+      <div class="custom-talk-label">✏️ 自己说一句话：</div>
+      <div class="custom-talk-row">
+        <input class="custom-talk-input" id="custom-input" placeholder="我想对身体说……" oninput="customTyped()">
+        <button class="custom-talk-btn" id="custom-speak-btn" onclick="speakCustom()" style="display:none">🔊 听一听</button>
+      </div>
+    </div>
+  </div>
+  <button class="btn-primary" id="btn-t" onclick="goTo('s-release')" style="display:none">说出来了！→</button>
+</div>
+</div>
+
+<!-- S6 RELEASE -->
+<div class="screen" id="s-release">
+<div class="progress"><div class="dot done"></div><div class="dot done"></div><div class="dot done"></div><div class="dot done"></div><div class="dot done"></div><div class="dot active"></div></div>
+<div class="card">
+  <span class="mascot" id="m5" onclick="speak('深呼吸，然后点泡泡，把情绪放出去！')">🌬️</span>
+  <h1 onclick="speak('把情绪放出去吧！')">把情绪<br>放出去吧！</h1>
+  <p class="subtitle" onclick="speak('深呼吸，然后点一下泡泡，让情绪飞走！')">深呼吸，然后点一下泡泡，<br>让情绪飞走～</p>
+  <div class="release-area">
+    <div class="bubble" id="bubble" onclick="releaseBubble()"><span id="bubble-emoji">😤</span></div>
+    <span class="tap-hint">点我！</span>
+  </div>
+  <p style="color:#9B7FC0;font-size:.85rem;font-weight:700;cursor:pointer" onclick="speak('慢慢吸气，一、二、三，再慢慢呼出去，一、二、三')">
+    慢慢吸气……一、二、三<br>再慢慢呼出去……一、二、三
+  </p>
+</div>
+</div>
+
+<!-- S7 AFFIRM -->
+<div class="screen" id="s-affirm">
+<div class="card">
+  <span class="mascot" onclick="speak('你真棒！现在选一颗星星，大声说出来！')">⭐</span>
+  <h1 onclick="speak('选一颗星星，大声说出来！')">选一颗星星，<br>大声说出来！</h1>
+  <p class="subtitle" onclick="speak('今天你听到了自己的身体，你很了不起！选一句你最想说的！')">今天你听到了自己的身体，<br>你很了不起！选一句说出来！</p>
+  <div class="affirm-grid">
+    <button class="affirm-btn" onclick="chooseAffirm(this,'我很勇敢')"><span class="a-star">💪</span><span class="a-text">我很勇敢</span></button>
+    <button class="affirm-btn" onclick="chooseAffirm(this,'我会照顾自己')"><span class="a-star">🤗</span><span class="a-text">我会照顾自己</span></button>
+    <button class="affirm-btn" onclick="chooseAffirm(this,'我的感受很重要')"><span class="a-star">💗</span><span class="a-text">我的感受很重要</span></button>
+    <button class="affirm-btn" onclick="chooseAffirm(this,'我能说出我的心情')"><span class="a-star">🗣️</span><span class="a-text">我能说出我的心情</span></button>
+    <button class="affirm-btn" onclick="chooseAffirm(this,'我越来越厉害了')"><span class="a-star">🌟</span><span class="a-text">我越来越厉害了</span></button>
+    <button class="affirm-btn" onclick="chooseAffirm(this,'我很爱我自己')"><span class="a-star">🥰</span><span class="a-text">我很爱我自己</span></button>
+  </div>
+  <button class="btn-primary" id="btn-a" onclick="goTo('s-celebrate')" style="display:none">我说了！→ 🎉</button>
+</div>
+</div>
+
+<!-- S8 CELEBRATE -->
+<div class="screen" id="s-celebrate">
+<div class="card">
+  <span class="mascot" style="animation-duration:1s" onclick="speak('太棒了！你真的很了不起！')">🥳</span>
+  <h1>太棒了！！</h1>
+  <span class="stars">⭐⭐⭐</span>
+  <p class="celebrate-text" id="cel-msg" onclick="speakCel()"></p>
+  <div style="font-size:2.2rem;margin:10px 0">🦋 🌸 ✨ 🌈</div>
+  <button class="btn-primary" onclick="speak('再玩一次！');restart()">再玩一次 🎮</button>
+</div>
+</div>
+
+</div>
+
+<script>
+let selBody='',selFeel='',selEmotion='',selAffirm='',customTalk='';
+const bodyEmoji={'头':'🗣️','脸':'😊','喉咙':'🫧','心脏':'💗','胸口':'🌸','肩膀':'🪨','肚子':'🌀','手':'🤲','腿':'🦵','其他':'🔍'};
+const feelEmoji={'紧紧的':'🤜','沉沉的':'🪨','热热的':'🔥','凉凉的':'❄️','跳得很快':'💓','空空的':'🕳️','胀胀的':'🎈','刺刺的':'🌵','软软的':'☁️','抖抖的':'🍃','说不清':'💭'};
+const emotionEmoji={'生气':'😤','害怕':'😨','伤心':'😢','委屈':'🥺','焦虑':'😟','开心':'😊','累了':'😴','孤单':'🌧️','骄傲':'🌟','不知道':'💭'};
+const mascotMap={'生气':'😤','害怕':'😰','伤心':'😢','委屈':'🥹','焦虑':'😟','开心':'😊','累了':'😴','孤单':'🌧️','骄傲':'🌟','不知道':'🤔'};
+const talkOpts={'生气':['我看到你了，你很生气，没关系的','生气是真实的，说出来就好了','谢谢你告诉我，我爱你'],'害怕':['我感受到你了，害怕是正常的','没关系，害怕也可以说出来','我在这里陪着你，不用怕'],'伤心':['我听到你了，伤心的时候可以哭','伤心是真实的，流出来就好了','没关系，我陪着你'],'委屈':['我知道你很委屈，说出来了','委屈可以说出来，不用憋着','我听到你了，你很委屈'],'焦虑':['我感受到你了，焦虑是正常的','没关系，慢慢来，不着急','深呼吸，一切都会好的'],'开心':['我感受到你了，你好开心！','开心真好！分享出来更好！','谢谢你告诉我，我也开心！'],'累了':['我知道你累了，可以休息一下','累了就休息，不用硬撑','辛苦了！你已经很棒了'],'孤单':['我感受到你了，你有点孤单','孤单的时候可以说出来','我在这里，你不是一个人'],'骄傲':['我感受到你了，你很骄傲！','太棒了！值得骄傲！','你做到了！你真的很厉害！'],'不知道':['没关系，说不出来也是一种感受','我知道你了，谢谢你告诉我','能感受到，就已经很棒了']};
+const celMsgs={'生气':'你说出了生气，真勇敢！\n情绪说出来就不那么重了～','害怕':'你说出了害怕，好厉害！\n说出来，害怕就小一点了～','伤心':'你说出了伤心，真了不起！\n眼泪流出来，心就轻了～','委屈':'你说出了委屈，太棒了！\n说出来比憋着好多了～','焦虑':'你说出了焦虑，好勇敢！\n深呼吸，一切都会好的～','开心':'你分享了开心，真好！\n开心说出来会加倍哦～','累了':'你说出了累，真棒！\n知道自己累了，就可以好好休息～','孤单':'你说出了孤单，好厉害！\n说出来，就不那么孤单了～','骄傲':'你分享了骄傲，太棒了！\n你真的做到了很了不起的事！','不知道':'你感受到了，并且说出来了！\n这已经非常了不起！'};
+
+function speak(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='zh-CN';u.rate=0.82;u.pitch=1.15;window.speechSynthesis.speak(u);}
+function speakEl(id){const el=document.getElementById(id);if(el){const t=el.textContent.replace(/[\p{Emoji}]/gu,'').trim();speak(t);}}
+function speakCel(){speak(document.getElementById('cel-msg').textContent);}
+
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='s-body')setTimeout(()=>speak('身体哪里有感觉？闭上眼睛感受一下，哪里有点不一样？'),300);
+  if(id==='s-feel'){
+    document.getElementById('body-disp').textContent=(bodyEmoji[selBody]||'🔍')+' '+selBody;
+    setTimeout(()=>speak('那个地方是什么感觉？选一个最像的！'),300);
+  }
+  if(id==='s-emotion'){
+    document.getElementById('feel-disp').textContent=(feelEmoji[selFeel]||'💭')+' '+selFeel;
+    setTimeout(()=>speak('这个感觉叫什么名字呢？点一下听一听！'),300);
+  }
+  if(id==='s-talk'){
+    document.getElementById('emotion-disp').textContent=(emotionEmoji[selEmotion]||'💭')+' '+selEmotion;
+    document.getElementById('m4').textContent=mascotMap[selEmotion]||'💬';
+    const c=document.getElementById('talk-opts');c.innerHTML='';
+    (talkOpts[selEmotion]||talkOpts['不知道']).forEach(o=>{
+      const b=document.createElement('button');b.className='talk-option';
+      b.innerHTML='<span class="opt-spk">🔊</span>'+o;
+      b.onclick=function(){document.querySelectorAll('.talk-option').forEach(x=>x.classList.remove('selected'));this.classList.add('selected');speak(o);customTalk='';document.getElementById('custom-input').value='';document.getElementById('custom-speak-btn').style.display='none';document.getElementById('btn-t').style.display='inline-block';};
+      c.appendChild(b);
+    });
+    document.getElementById('btn-t').style.display='none';
+    document.getElementById('custom-input').value='';
+    document.getElementById('custom-speak-btn').style.display='none';
+    setTimeout(()=>speak('选一句你想跟身体说的话，或者自己写一句！'),300);
+  }
+  if(id==='s-release'){
+    document.getElementById('bubble-emoji').textContent=emotionEmoji[selEmotion]||'💭';
+    document.getElementById('bubble').classList.remove('releasing');
+    setTimeout(()=>speak('来！深呼吸，然后点一下泡泡，把情绪放出去吧！'),300);
+  }
+  if(id==='s-affirm'){
+    document.getElementById('btn-a').style.display='none';
+    document.querySelectorAll('.affirm-btn').forEach(b=>b.classList.remove('chosen'));
+    setTimeout(()=>speak('太厉害了！情绪飞走了！现在选一颗星星，大声说出来！'),300);
+  }
+  if(id==='s-celebrate'){
+    const msg=celMsgs[selEmotion]||'你听到了自己的身体信号！情绪飞走了！';
+    const full=msg+'\n\n你说：'+selAffirm+'！';
+    document.getElementById('cel-msg').textContent=full;
+    launchConfetti();
+    setTimeout(()=>speak('太棒了！'+msg+'还有，'+selAffirm+'！'),400);
+  }
+}
+
+function selectBody(btn,spoken){
+  document.querySelectorAll('.body-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');selBody=btn.dataset.part;speak(spoken||selBody);
+  const ob=document.getElementById('other-input-box');
+  if(selBody==='其他'){ob.style.display='block';document.getElementById('btn-b').style.display='none';setTimeout(()=>document.getElementById('other-input').focus(),100);}
+  else{ob.style.display='none';document.getElementById('btn-b').style.display='inline-block';}
+}
+function otherTyped(){const v=document.getElementById('other-input').value.trim();if(v){selBody=v;document.getElementById('btn-b').style.display='inline-block';}else{document.getElementById('btn-b').style.display='none';}}
+function selectFeel(btn,spoken){document.querySelectorAll('.feel-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');selFeel=btn.dataset.feel;speak(spoken||selFeel);document.getElementById('btn-f').style.display='inline-block';}
+function selectEmotion(btn,spoken){document.querySelectorAll('.emotion-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');selEmotion=btn.dataset.emotion;speak(spoken||selEmotion);document.getElementById('m3').textContent=mascotMap[selEmotion]||'🎭';document.getElementById('btn-e').style.display='inline-block';}
+
+function customTyped(){
+  const v=document.getElementById('custom-input').value.trim();
+  const spkBtn=document.getElementById('custom-speak-btn');
+  if(v){
+    customTalk=v;
+    spkBtn.style.display='inline-block';
+    document.querySelectorAll('.talk-option').forEach(x=>x.classList.remove('selected'));
+    document.getElementById('btn-t').style.display='inline-block';
+  } else {
+    customTalk='';
+    spkBtn.style.display='none';
+    if(!document.querySelector('.talk-option.selected'))document.getElementById('btn-t').style.display='none';
+  }
+}
+function speakCustom(){const v=document.getElementById('custom-input').value.trim();if(v)speak(v);}
+
+function chooseAffirm(btn,text){document.querySelectorAll('.affirm-btn').forEach(b=>b.classList.remove('chosen'));btn.classList.add('chosen');selAffirm=text;speak(text+'！');document.getElementById('btn-a').style.display='inline-block';}
+function releaseBubble(){document.getElementById('bubble').classList.add('releasing');speak('飞走啦！情绪飞走了！');setTimeout(()=>goTo('s-affirm'),1400);}
+
+function launchConfetti(){
+  const c=document.getElementById('confetti');c.innerHTML='';
+  const cols=['#FFB5C8','#C9B1E8','#A8D8EA','#B8E4B8','#FFE4A0','#FF85A1'];
+  for(let i=0;i<70;i++){const p=document.createElement('div');p.className='confetti-piece';p.style.left=Math.random()*100+'vw';p.style.background=cols[Math.floor(Math.random()*cols.length)];p.style.animationDelay=Math.random()*1.5+'s';p.style.animationDuration=(1.5+Math.random()*1.5)+'s';p.style.transform=`rotate(${Math.random()*360}deg)`;c.appendChild(p);}
+  setTimeout(()=>c.innerHTML='',4500);
+}
+
+function restart(){
+  selBody=selFeel=selEmotion=selAffirm=customTalk='';
+  window.speechSynthesis.cancel();
+  ['body-btn','feel-btn','emotion-btn','talk-option','affirm-btn'].forEach(cls=>document.querySelectorAll('.'+cls).forEach(b=>b.classList.remove('selected','chosen')));
+  ['btn-b','btn-f','btn-e','btn-t','btn-a'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('other-input-box').style.display='none';
+  document.getElementById('other-input').value='';
+  document.getElementById('custom-input').value='';
+  document.getElementById('custom-speak-btn').style.display='none';
+  document.getElementById('m3').textContent='🎭';
+  document.getElementById('m4').textContent='💬';
+  goTo('s-welcome');
+}
+
+window.addEventListener('load',()=>{setTimeout(()=>speak('你好！我是小花！欢迎来到身体小信号！点开始游戏，我们一起来听听身体说什么！'),800);});
+</script>
+</body>
+</html>
