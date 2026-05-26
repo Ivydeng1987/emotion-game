@@ -274,7 +274,26 @@ const mascotMap={'生气':'😤','害怕':'😰','伤心':'😢','委屈':'🥹'
 const talkOpts={'生气':['我看到你了，你很生气，没关系的','生气是真实的，说出来就好了','谢谢你告诉我，我爱你'],'害怕':['我感受到你了，害怕是正常的','没关系，害怕也可以说出来','我在这里陪着你，不用怕'],'伤心':['我听到你了，伤心的时候可以哭','伤心是真实的，流出来就好了','没关系，我陪着你'],'委屈':['我知道你很委屈，说出来了','委屈可以说出来，不用憋着','我听到你了，你很委屈'],'焦虑':['我感受到你了，焦虑是正常的','没关系，慢慢来，不着急','深呼吸，一切都会好的'],'开心':['我感受到你了，你好开心！','开心真好！分享出来更好！','谢谢你告诉我，我也开心！'],'累了':['我知道你累了，可以休息一下','累了就休息，不用硬撑','辛苦了！你已经很棒了'],'孤单':['我感受到你了，你有点孤单','孤单的时候可以说出来','我在这里，你不是一个人'],'骄傲':['我感受到你了，你很骄傲！','太棒了！值得骄傲！','你做到了！你真的很厉害！'],'不知道':['没关系，说不出来也是一种感受','我知道你了，谢谢你告诉我','能感受到，就已经很棒了']};
 const celMsgs={'生气':'你说出了生气，真勇敢！\n情绪说出来就不那么重了～','害怕':'你说出了害怕，好厉害！\n说出来，害怕就小一点了～','伤心':'你说出了伤心，真了不起！\n眼泪流出来，心就轻了～','委屈':'你说出了委屈，太棒了！\n说出来比憋着好多了～','焦虑':'你说出了焦虑，好勇敢！\n深呼吸，一切都会好的～','开心':'你分享了开心，真好！\n开心说出来会加倍哦～','累了':'你说出了累，真棒！\n知道自己累了，就可以好好休息～','孤单':'你说出了孤单，好厉害！\n说出来，就不那么孤单了～','骄傲':'你分享了骄傲，太棒了！\n你真的做到了很了不起的事！','不知道':'你感受到了，并且说出来了！\n这已经非常了不起！'};
 
-function speak(t){if(!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='zh-CN';u.rate=0.82;u.pitch=1.15;window.speechSynthesis.speak(u);}
+function speak(t){
+  if(!t)return;
+  fetch('https://tts-proxy-azure.vercel.app/api/tts',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({text:t})
+  }).then(r=>r.arrayBuffer()).then(buf=>{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    ctx.decodeAudioData(buf,decoded=>{
+      const src=ctx.createBufferSource();
+      src.buffer=decoded;
+      src.connect(ctx.destination);
+      src.start();
+    });
+  }).catch(()=>{
+    const u=new SpeechSynthesisUtterance(t);
+    u.lang='zh-CN';u.rate=0.82;
+    window.speechSynthesis.speak(u);
+  });
+}
 function speakEl(id){const el=document.getElementById(id);if(el){const t=el.textContent.replace(/[\p{Emoji}]/gu,'').trim();speak(t);}}
 function speakCel(){speak(document.getElementById('cel-msg').textContent);}
 
